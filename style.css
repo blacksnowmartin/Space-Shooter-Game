@@ -5,32 +5,45 @@
 }
 
 body {
-  background-color: #000;
-  color: #fff;
-  font-family: Arial, sans-serif;
+  background: #000;
   overflow: hidden;
+  cursor: none; /* Hide default cursor for immersion */
 }
 
 #game-container {
   position: relative;
   width: 100vw;
   height: 100vh;
-  background: url('space-background.jpg') no-repeat center center/cover;
+  background: url('space-background.jpg') no-repeat center/cover;
 }
 
 #player {
   position: absolute;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 50px;
-  height: 50px;
-  background: url('spaceship.png') no-repeat center center/cover;
+  width: 64px; /* Matches spaceship.png dimensions */
+  height: 64px;
+  background: url('spaceship.png') no-repeat center/contain; /* Ensures image fits */
+  transition: left 0.1s, top 0.1s; /* Smooth movement */
+}
+
+.asteroid {
+  position: absolute;
+  width: 64px; /* Matches asteroid.png dimensions */
+  height: 64px;
+  background: url('asteroid.png') no-repeat center/contain;
+  animation: rotate 4s linear infinite;
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 #score {
   position: absolute;
   top: 20px;
   left: 20px;
+  color: #fff;
+  font-family: Arial, sans-serif;
   font-size: 24px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }

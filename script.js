@@ -5,7 +5,7 @@ const scoreDisplay = document.getElementById('score');
 let score = 0;
 let isGameOver = false;
 
-// Player Movement
+// Player Movement (Follows Mouse)
 document.addEventListener('mousemove', (e) => {
   if (!isGameOver) {
     const x = e.clientX - player.offsetWidth / 2;
@@ -15,61 +15,59 @@ document.addEventListener('mousemove', (e) => {
   }
 });
 
-// Create Asteroids
+// Asteroid Creation
 function createAsteroid() {
   if (isGameOver) return;
 
   const asteroid = document.createElement('div');
-  asteroid.classList.add('asteroid');
-  asteroid.style.left = `${Math.random() * (window.innerWidth - 50)}px`;
-  asteroid.style.top = `-50px`;
+  asteroid.className = 'asteroid';
+  asteroid.style.left = `${Math.random() * (window.innerWidth - 64)}px`;
+  asteroid.style.top = '-64px';
   gameContainer.appendChild(asteroid);
 
-  // Move Asteroid
-  const asteroidInterval = setInterval(() => {
-    const asteroidTop = asteroid.offsetTop;
-    if (asteroidTop > window.innerHeight) {
+  // Asteroid Movement
+  let asteroidInterval = setInterval(() => {
+    const asteroidY = asteroid.offsetTop;
+    if (asteroidY > window.innerHeight) {
       clearInterval(asteroidInterval);
       asteroid.remove();
     } else {
-      asteroid.style.top = `${asteroidTop + 5}px`;
+      asteroid.style.top = `${asteroidY + 4}px`; // Adjust speed here
     }
 
-    // Check Collision
+    // Collision Check
     if (checkCollision(player, asteroid)) {
       gameOver();
     }
   }, 20);
 }
 
-// Check Collision
-function checkCollision(player, asteroid) {
-  const playerRect = player.getBoundingClientRect();
-  const asteroidRect = asteroid.getBoundingClientRect();
+// Collision Detection
+function checkCollision(a, b) {
+  const aRect = a.getBoundingClientRect();
+  const bRect = b.getBoundingClientRect();
 
   return (
-    playerRect.left < asteroidRect.right &&
-    playerRect.right > asteroidRect.left &&
-    playerRect.top < asteroidRect.bottom &&
-    playerRect.bottom > asteroidRect.top
+    aRect.left < bRect.right &&
+    aRect.right > bRect.left &&
+    aRect.top < bRect.bottom &&
+    aRect.bottom > bRect.top
   );
 }
 
 // Game Over
 function gameOver() {
   isGameOver = true;
-  alert(`Game Over! Your Score: ${score}`);
+  alert(`Game Over! Score: ${score}`);
   window.location.reload();
 }
 
-// Update Score
+// Score Update
 function updateScore() {
   score++;
   scoreDisplay.textContent = `Score: ${score}`;
 }
 
-// Spawn Asteroids
-setInterval(createAsteroid, 1000);
-
-// Update Score Every Second
-setInterval(updateScore, 1000);
+// Game Loop
+setInterval(createAsteroid, 1500); // Spawns asteroids every 1.5 seconds
+setInterval(updateScore, 1000); // Updates score every second
