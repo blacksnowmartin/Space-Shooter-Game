@@ -14,14 +14,14 @@ body {
   position: relative;
   width: 100vw;
   height: 100vh;
-  background: url('space-background.jpg') no-repeat center/cover;
+  background: url('spacebg.jpg') no-repeat center/cover;
 }
 
 #player {
   position: absolute;
   width: 64px; /* Matches spaceship.png dimensions */
   height: 64px;
-  background: url('spaceship.jpg') no-repeat center/contain; /* Ensures image fits */
+  background: url('spaceship.png') no-repeat center/contain; /* Ensures image fits */
   transition: left 0.1s, top 0.1s; /* Smooth movement */
 }
 
@@ -29,7 +29,7 @@ body {
   position: absolute;
   width: 64px; /* Matches asteroid.png dimensions */
   height: 64px;
-  background: url('asteroid.jpg') no-repeat center/contain;
+  background: url('asteroid.png') no-repeat center/contain;
   animation: rotate 4s linear infinite;
 }
 
