@@ -4,6 +4,9 @@ const gameContainer = document.getElementById('game-container');
 const scoreDisplay = document.getElementById('score');
 let score = 0;
 let isGameOver = false;
+let lives = 3;
+let asteroidSpeed = 4;
+let asteroidSpawnRate = 1500;
 
 // Player Movement (Follows Mouse)
 document.addEventListener('mousemove', (e) => {
@@ -32,12 +35,14 @@ function createAsteroid() {
       clearInterval(asteroidInterval);
       asteroid.remove();
     } else {
-      asteroid.style.top = `${asteroidY + 4}px`; // Adjust speed here
+      asteroid.style.top = `${asteroidY + asteroidSpeed}px`; // Adjust speed dynamically
     }
 
     // Collision Check
     if (checkCollision(player, asteroid)) {
-      gameOver();
+      asteroid.remove();
+      clearInterval(asteroidInterval);
+      loseLife();
     }
   }, 20);
 }
@@ -55,19 +60,60 @@ function checkCollision(a, b) {
   );
 }
 
+// Lose Life
+function loseLife() {
+  lives--;
+  if (lives <= 0) {
+    gameOver();
+  } else {
+    alert(`You were hit! Lives remaining: ${lives}`);
+  }
+}
+
 // Game Over
 function gameOver() {
   isGameOver = true;
-  alert(`Game Over! Score: ${score}`);
+  const gameOverScreen = document.createElement('div');
+  gameOverScreen.id = 'game-over';
+  gameOverScreen.innerHTML = `<h1>Game Over</h1><p>Score: ${score}</p><button onclick="restartGame()">Restart</button>`;
+  gameContainer.appendChild(gameOverScreen);
+}
+
+// Restart Game
+function restartGame() {
   window.location.reload();
 }
 
 // Score Update
 function updateScore() {
+  if (isGameOver) return;
   score++;
   scoreDisplay.textContent = `Score: ${score}`;
+
+  // Increase difficulty
+  if (score % 10 === 0) {
+    asteroidSpeed++;
+    asteroidSpawnRate = Math.max(500, asteroidSpawnRate - 100); // Cap spawn rate at 500ms
+    clearInterval(asteroidInterval);
+    asteroidInterval = setInterval(createAsteroid, asteroidSpawnRate);
+  }
 }
 
+// Pause/Resume Game
+let isPaused = false;
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'p') {
+    isPaused = !isPaused;
+    if (isPaused) {
+      clearInterval(asteroidInterval);
+      clearInterval(scoreInterval);
+    } else {
+      asteroidInterval = setInterval(createAsteroid, asteroidSpawnRate);
+      scoreInterval = setInterval(updateScore, 1000);
+    }
+  }
+});
+
 // Game Loop
-setInterval(createAsteroid, 1500); // Spawns asteroids every 1.5 seconds
-setInterval(updateScore, 1000); // Updates score every second
+let asteroidInterval = setInterval(createAsteroid, asteroidSpawnRate); // Spawns asteroids dynamically
+let scoreInterval = setInterval(updateScore, 1000); // Updates score every second
